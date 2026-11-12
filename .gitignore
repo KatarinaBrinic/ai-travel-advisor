@@ -1,0 +1,25 @@
+# Secrets — never commit API keys
+.env
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Common local environments (keep or extend to fit your stack)
+venv/
+.venv/
+node_modules/
+__pycache__/
+dist/
+
+# SQLite runtime data (schema/migrations are tracked, the db file is not)
+server/prisma/data/*.db
+server/prisma/data/*.db-journal
+
+# Additional local secrets and generated files
+.env.*
+!.env.example
+!.env.*.example
+*.sqlite
+*.sqlite3
+*.log

@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Traveler {
+  id            String         @id @default(cuid())
+  createdAt     DateTime       @default(now())
+  conversations Conversation[]
+  facts         TravelerFact[]
+  tripPlans     TripPlan[]
+}
+
+model Conversation {
+  id         String    @id @default(cuid())
+  travelerId String
+  traveler   Traveler  @relation(fields: [travelerId], references: [id], onDelete: Cascade)
+  title      String
+  tripPlanId String?
+  tripPlan   TripPlan? @relation(fields: [tripPlanId], references: [id], onDelete: SetNull)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  messages   Message[]
+
+  @@index([travelerId])
+  @@index([tripPlanId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String
+  content        String
+  toolCalls      String?
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId, createdAt])
+}
+
+model TripPlan {
+  id            String         @id @default(cuid())
+  travelerId    String
+  traveler      Traveler       @relation(fields: [travelerId], references: [id], onDelete: Cascade)
+  destination   String?
+  startDate     DateTime?
+  endDate       DateTime?
+  days          String         @default("[]")
+  notes         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  conversations Conversation[]
+
+  @@index([travelerId])
+}
+
+model TravelerFact {
+  id                   String   @id @default(cuid())
+  travelerId           String
+  traveler             Traveler @relation(fields: [travelerId], references: [id], onDelete: Cascade)
+  key                  String
+  value                String
+  sourceConversationId String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@unique([travelerId, key])
+}
+
+model SystemPrompt {
+  id        String   @id @default("singleton")
+  content   String
+  updatedAt DateTime @updatedAt
+}

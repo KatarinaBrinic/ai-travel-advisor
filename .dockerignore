@@ -1,0 +1,12 @@
+node_modules
+**/node_modules
+dist
+**/dist
+.git
+.env
+**/.env
+
+# Local SQLite runtime data — never bake a developer's local database into
+# the image (consistent with .gitignore's treatment of the same files).
+server/prisma/data/*.db
+server/prisma/data/*.db-journal
